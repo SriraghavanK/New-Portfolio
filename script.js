@@ -48,6 +48,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Add the new initialization
   initRevampedSkills()
+  
+  // Add the new responsive enhancements
+  enhanceResponsiveness()
 })
 
 // Initialize typing animation
@@ -224,7 +227,10 @@ function init3DTechBackground() {
 
     // Add more tech elements - floating cubes
     const cubes = []
-    for (let i = 0; i < 20; i++) {
+    // Reduce number of cubes on mobile for better performance
+    const cubeCount = window.innerWidth < 768 ? 10 : 20
+    
+    for (let i = 0; i < cubeCount; i++) {
       const size = Math.random() * 0.3 + 0.1
       const cubeGeometry = new THREE.BoxGeometry(size, size, size)
       const cubeMaterial = new THREE.MeshBasicMaterial({
@@ -254,14 +260,15 @@ function init3DTechBackground() {
       cubes.push(cube)
     }
 
-    // Add connecting lines between some cubes
+    // Add connecting lines between some cubes - fewer on mobile
     const linesMaterial = new THREE.LineBasicMaterial({
       color: 0x00c6ff,
       transparent: true,
       opacity: 0.3,
     })
 
-    for (let i = 0; i < 15; i++) {
+    const lineCount = window.innerWidth < 768 ? 8 : 15
+    for (let i = 0; i < lineCount; i++) {
       const startCube = cubes[Math.floor(Math.random() * cubes.length)]
       const endCube = cubes[Math.floor(Math.random() * cubes.length)]
 
@@ -286,6 +293,13 @@ function init3DTechBackground() {
       renderer.setSize(width, height)
       camera.aspect = width / height
       camera.updateProjectionMatrix()
+      
+      // Adjust camera position based on screen size
+      if (width < 768) {
+        camera.position.z = 7; // Move camera back on mobile for better view
+      } else {
+        camera.position.z = 5;
+      }
     })
 
     // Animation loop
@@ -302,9 +316,10 @@ function init3DTechBackground() {
         cube.rotation.y += cube.userData.rotationSpeed.y
       })
 
-      // Subtle camera movement
-      camera.position.x = Math.sin(Date.now() * 0.0005) * 0.5
-      camera.position.y = Math.cos(Date.now() * 0.0005) * 0.5
+      // Subtle camera movement - reduce on mobile
+      const movementIntensity = window.innerWidth < 768 ? 0.0002 : 0.0005;
+      camera.position.x = Math.sin(Date.now() * movementIntensity) * 0.5
+      camera.position.y = Math.cos(Date.now() * movementIntensity) * 0.5
       camera.lookAt(scene.position)
 
       renderer.render(scene, camera)
@@ -375,7 +390,10 @@ function init3DTechBackground() {
     // Add smaller components (resistors, capacitors)
     const componentColors = [0x00c6ff, 0xff5c33, 0x00ff00, 0xffff00]
 
-    for (let i = 0; i < 12; i++) {
+    // Reduce components on mobile
+    const componentCount = window.innerWidth < 768 ? 6 : 12;
+    
+    for (let i = 0; i < componentCount; i++) {
       const size = 0.15 + Math.random() * 0.1
       const componentGeometry = new THREE.BoxGeometry(size, size, 0.05)
       const componentMaterial = new THREE.MeshBasicMaterial({
@@ -1019,4 +1037,139 @@ function getRandomColor() {
     color += letters[Math.floor(Math.random() * 16)]
   }
   return color
+}
+
+// Add this function to improve responsiveness
+function enhanceResponsiveness() {
+  // Handle responsive adjustments based on screen size
+  const handleResize = () => {
+    const width = window.innerWidth;
+    
+    // Adjust 3D elements for mobile
+    const techScene = document.querySelector('.tech-3d-scene');
+    if (techScene) {
+      if (width < 768) {
+        // Reduce complexity on mobile
+        const renderer = techScene.querySelector('canvas');
+        if (renderer) {
+          renderer.style.opacity = '0.5'; // Make background less prominent on mobile
+        }
+      } else {
+        const renderer = techScene.querySelector('canvas');
+        if (renderer) {
+          renderer.style.opacity = '1';
+        }
+      }
+    }
+    
+    // Adjust skill cards layout for better mobile view
+    const skillCards = document.querySelectorAll('.skill-card');
+    skillCards.forEach(card => {
+      if (width < 576) {
+        card.style.minHeight = '220px'; // Smaller height on mobile
+      } else {
+        card.style.minHeight = '280px';
+      }
+    });
+    
+    // Adjust hero content for better mobile view
+    const heroContent = document.querySelector('.hero-content');
+    if (heroContent) {
+      if (width < 576) {
+        heroContent.style.paddingTop = '80px'; // Add space at top on mobile
+      } else {
+        heroContent.style.paddingTop = '0';
+      }
+    }
+    
+    // Adjust project cards for better mobile view
+    const projectCards = document.querySelectorAll('.project-card');
+    projectCards.forEach(card => {
+      if (width < 576) {
+        const projectImg = card.querySelector('.project-img');
+        if (projectImg) {
+          projectImg.style.height = '180px'; // Smaller images on mobile
+        }
+      } else {
+        const projectImg = card.querySelector('.project-img');
+        if (projectImg) {
+          projectImg.style.height = '200px';
+        }
+      }
+    });
+  };
+  
+  // Run on load and resize
+  handleResize();
+  window.addEventListener('resize', handleResize);
+  
+  // Improve touch interactions for mobile
+  const addTouchSupport = () => {
+    // Add touch support for skills cube
+    const cube = document.querySelector('.skills-cube');
+    if (cube) {
+      const cubeContainer = document.querySelector('.skills-cube-container');
+      
+      let touchStartX, touchStartY;
+      let initialRotation = { x: 0, y: 0 };
+      
+      cubeContainer.addEventListener('touchstart', (e) => {
+        if (!e.touches[0]) return;
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        
+        // Get current rotation
+        const transform = cube.style.transform;
+        const rotateXMatch = transform.match(/rotateX$$([^)]+)$$/);
+        const rotateYMatch = transform.match(/rotateY$$([^)]+)$$/);
+        
+        initialRotation.x = rotateXMatch ? parseFloat(rotateXMatch[1]) : 0;
+        initialRotation.y = rotateYMatch ? parseFloat(rotateYMatch[1]) : 0;
+        
+        // Stop animation when starting to touch
+        cube.style.animation = 'none';
+      });
+      
+      cubeContainer.addEventListener('touchmove', (e) => {
+        if (!e.touches[0]) return;
+        const touchX = e.touches[0].clientX;
+        const touchY = e.touches[0].clientY;
+        
+        const deltaX = touchX - touchStartX;
+        const deltaY = touchY - touchStartY;
+        
+        const newRotationX = initialRotation.x + (deltaY * 0.5);
+        const newRotationY = initialRotation.y + (deltaX * 0.5);
+        
+        cube.style.transform = `rotateX(${newRotationX}deg) rotateY(${newRotationY}deg)`;
+      });
+      
+      cubeContainer.addEventListener('touchend', () => {
+        // Resume animation after touch
+        setTimeout(() => {
+          cube.style.animation = 'rotateCube 20s infinite linear';
+          cube.style.transform = '';
+        }, 1000);
+      });
+    }
+    
+    // Add touch support for project cards
+    const projectCards = document.querySelectorAll('.project-card');
+    projectCards.forEach(card => {
+      card.addEventListener('touchstart', () => {
+        card.style.transition = 'transform 0.3s ease, box-shadow 0.3s ease';
+        card.style.transform = 'translateY(-10px) rotateX(0) rotateY(0)';
+        card.style.boxShadow = '0 15px 30px rgba(0, 0, 0, 0.1)';
+      });
+      
+      card.addEventListener('touchend', () => {
+        setTimeout(() => {
+          card.style.transform = 'translateY(0) rotateX(0) rotateY(0)';
+          card.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.05)';
+        }, 100);
+      });
+    });
+  };
+  
+  addTouchSupport();
 }
