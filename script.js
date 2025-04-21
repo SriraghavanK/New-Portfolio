@@ -1238,7 +1238,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
         // Send data to your Express server
-        const response = await fetch("http://localhost:5000/send", {
+        const response = await fetch("https://new-portfolio-qw7x.onrender.com/send", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
