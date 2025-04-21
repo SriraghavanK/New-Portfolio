@@ -1221,10 +1221,59 @@ document.addEventListener("DOMContentLoaded", () => {
   const submitBtn = document.getElementById("submit-btn")
 
   if (contactForm) {
+    // Get all form fields that need validation
+    const formFields = contactForm.querySelectorAll('input[required], textarea[required], input[type="email"]')
+
+    // Add minlength attributes to fields
+    const nameField = document.getElementById("name")
+    const messageField = document.getElementById("message")
+    const emailField = document.getElementById("email")
+
+    if (nameField) nameField.setAttribute("minlength", "2")
+    if (messageField) messageField.setAttribute("minlength", "5")
+
+    // Add input event listeners to all fields for real-time validation
+    formFields.forEach((field) => {
+      // Mark as dirty and validate on input (as user types)
+      field.addEventListener("input", () => {
+        if (!field.classList.contains("dirty")) {
+          field.classList.add("dirty")
+        }
+        validateField(field)
+      })
+
+      // Also validate on blur (when user leaves the field)
+      field.addEventListener("blur", () => {
+        field.classList.add("dirty")
+        validateField(field)
+      })
+    })
+
+    // Handle form submission - REPLACE the existing submit handler
     contactForm.addEventListener("submit", async (e) => {
+      // Always prevent default form submission
       e.preventDefault()
 
-      // Change button text and disable it
+      // Mark all fields as dirty
+      formFields.forEach((field) => {
+        field.classList.add("dirty")
+      })
+
+      // Validate all fields
+      let isValid = true
+      formFields.forEach((field) => {
+        if (!validateField(field)) {
+          isValid = false
+        }
+      })
+
+      // Don't proceed if form is invalid
+      if (!isValid) {
+        formStatus.innerHTML = '<div class="alert alert-danger">Please fix the errors before submitting.</div>'
+        return
+      }
+
+      // If validation passes, proceed with form submission
       submitBtn.textContent = "SENDING..."
       submitBtn.disabled = true
 
@@ -1233,7 +1282,7 @@ document.addEventListener("DOMContentLoaded", () => {
         name: document.getElementById("name").value,
         email: document.getElementById("email").value,
         message: document.getElementById("message").value,
-        phone: document.getElementById("phone").value, // Using subject field for phone
+        phone: document.getElementById("phone").value,
       }
 
       try {
@@ -1252,6 +1301,13 @@ document.addEventListener("DOMContentLoaded", () => {
           // Success message
           formStatus.innerHTML = `<div class="alert alert-success">${data.message || "Message sent successfully!"}</div>`
           contactForm.reset()
+
+          // Reset validation state after successful submission
+          formFields.forEach((field) => {
+            field.classList.remove("dirty")
+            field.classList.remove("is-valid")
+            field.classList.remove("is-invalid")
+          })
         } else {
           // Error message
           formStatus.innerHTML = `<div class="alert alert-danger">${data.message || "Something went wrong. Please try again."}</div>`
@@ -1269,3 +1325,39 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 })
 
+// Form validation function
+function validateField(field) {
+  const invalidFeedback = field.nextElementSibling
+
+  // Reset validation state
+  field.classList.remove("is-invalid")
+  field.classList.remove("is-valid")
+
+  // Only validate if the field is "dirty" (user has interacted with it)
+  if (!field.classList.contains("dirty")) return true
+
+  let errorMessage = ""
+
+  // Check validity
+  if (field.validity.valueMissing) {
+    errorMessage = `${field.placeholder} is required`
+  } else if (field.validity.typeMismatch && field.type === "email") {
+    errorMessage = "Please enter a valid email address (include @ symbol)"
+  } else if (field.validity.tooShort) {
+    errorMessage = `${field.placeholder} must be at least ${field.minLength} characters`
+  } else if (field.validity.tooLong) {
+    errorMessage = `${field.placeholder} must be less than ${field.maxLength} characters`
+  } else if (field.validity.patternMismatch && field.type === "email") {
+    errorMessage = "Please enter a valid email address"
+  }
+
+  // Update validation state
+  if (errorMessage) {
+    field.classList.add("is-invalid")
+    invalidFeedback.textContent = errorMessage
+    return false
+  } else {
+    field.classList.add("is-valid")
+    return true
+  }
+}
