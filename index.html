@@ -1963,70 +1963,69 @@
           </div>
           <div class="col-lg-7" data-aos="fade-left">
             <!-- Add responsive form improvements -->
-            <form id="contact-form" class="contact-form" novalidate>
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <div class="form-group">
-                    <label for="name" class="sr-only">Your Name</label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      class="form-control"
-                      placeholder="Your Name"
-                      required
-                      aria-required="true"
-                    />
-                    <div class="invalid-feedback">Please enter your name</div>
-                  </div>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <div class="form-group">
-                    <label for="email" class="sr-only">Your Email</label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      class="form-control"
-                      placeholder="Your Email"
-                      required
-                      aria-required="true"
-                    />
-                    <div class="invalid-feedback">Please enter a valid email address</div>
-                  </div>
-                </div>
-              </div>
-              <div class="form-group mb-3">
-                <label for="subject" class="sr-only">Subject</label>
-                <input
-                  type="text"
-                  id="subject"
-                  name="subject"
-                  class="form-control"
-                  placeholder="Subject"
-                  required
-                  aria-required="true"
-                />
-                <div class="invalid-feedback">Please enter a subject</div>
-              </div>
-              <div class="form-group mb-4">
-                <label for="message" class="sr-only">Your Message</label>
-                <textarea
-                  id="message"
-                  name="message"
-                  class="form-control"
-                  rows="5"
-                  placeholder="Your Message"
-                  required
-                  aria-required="true"
-                ></textarea>
-                <div class="invalid-feedback">Please enter a message</div>
-              </div>
-              <button type="submit" id="submit-btn" class="btn btn-primary btn-lg">
-                SEND MESSAGE
-              </button>
-              <div id="form-status" class="mt-3"></div>
-            </form>
+            <!-- Find the contact form in your HTML and make sure it has these attributes -->
+<form id="contact-form" class="contact-form" novalidate>
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <div class="form-group">
+        <label for="name" class="sr-only">Your Name</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          class="form-control"
+          placeholder="Your Name"
+          required
+          aria-required="true"
+        />
+        <div class="invalid-feedback">Please enter your name</div>
+      </div>
+    </div>
+    <div class="col-md-6 mb-3">
+      <div class="form-group">
+        <label for="email" class="sr-only">Your Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          class="form-control"
+          placeholder="Your Email"
+          required
+          aria-required="true"
+        />
+        <div class="invalid-feedback">Please enter a valid email address</div>
+      </div>
+    </div>
+  </div>
+  <div class="form-group mb-3">
+    <label for="subject" class="sr-only">Phone</label>
+    <input
+      type="text"
+      id="phone"
+      name="phone"
+      class="form-control"
+      placeholder="Phone (Optional)"
+    />
+  </div>
+  <div class="form-group mb-4">
+    <label for="message" class="sr-only">Your Message</label>
+    <textarea
+      id="message"
+      name="message"
+      class="form-control"
+      rows="5"
+      placeholder="Your Message"
+      required
+      aria-required="true"
+    ></textarea>
+    <div class="invalid-feedback">Please enter a message</div>
+  </div>
+  <button type="submit" id="submit-btn" class="btn btn-primary btn-lg">
+    SEND MESSAGE
+  </button>
+  <div id="form-status" class="mt-3"></div>
+</form>
+
           </div>
         </div>
       </div>

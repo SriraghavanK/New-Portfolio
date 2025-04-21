@@ -1212,3 +1212,60 @@ function enhanceResponsiveness() {
 
   addTouchSupport();
 }
+// Add this code at the end of your script.js file, after all the existing code
+
+// Initialize contact form submission
+document.addEventListener("DOMContentLoaded", () => {
+  const contactForm = document.getElementById("contact-form")
+  const formStatus = document.getElementById("form-status")
+  const submitBtn = document.getElementById("submit-btn")
+
+  if (contactForm) {
+    contactForm.addEventListener("submit", async (e) => {
+      e.preventDefault()
+
+      // Change button text and disable it
+      submitBtn.textContent = "SENDING..."
+      submitBtn.disabled = true
+
+      // Get form data
+      const formData = {
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        message: document.getElementById("message").value,
+        phone: document.getElementById("phone").value, // Using subject field for phone
+      }
+
+      try {
+        // Send data to your Express server
+        const response = await fetch("http://localhost:5000/send", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        })
+
+        const data = await response.json()
+
+        if (response.ok) {
+          // Success message
+          formStatus.innerHTML = `<div class="alert alert-success">${data.message || "Message sent successfully!"}</div>`
+          contactForm.reset()
+        } else {
+          // Error message
+          formStatus.innerHTML = `<div class="alert alert-danger">${data.message || "Something went wrong. Please try again."}</div>`
+        }
+      } catch (error) {
+        // Network error
+        formStatus.innerHTML = '<div class="alert alert-danger">Network error. Please check your connection.</div>'
+        console.error("Error:", error)
+      } finally {
+        // Reset button
+        submitBtn.textContent = "SEND MESSAGE"
+        submitBtn.disabled = false
+      }
+    })
+  }
+})
+
