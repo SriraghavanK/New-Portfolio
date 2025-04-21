@@ -1228,9 +1228,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const nameField = document.getElementById("name")
     const messageField = document.getElementById("message")
     const emailField = document.getElementById("email")
+    const phoneField = document.getElementById("phone")
 
     if (nameField) nameField.setAttribute("minlength", "2")
     if (messageField) messageField.setAttribute("minlength", "5")
+    if (phoneField) phoneField.setAttribute("minlength", "10")
 
     // Add input event listeners to all fields for real-time validation
     formFields.forEach((field) => {
@@ -1261,6 +1263,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Validate all fields
       let isValid = true
+      const phoneValue = phoneField.value.trim();
+      const phonePattern = /^\d{10}$/;
+      if (!phonePattern.test(phoneValue)) {
+        phoneField.classList.add("is-invalid");
+        phoneField.classList.remove("is-valid");
+        phoneField.focus();
+        isValid = false;
+      } else {
+        phoneField.classList.remove("is-invalid");
+        phoneField.classList.add("is-valid");
+      }
       formFields.forEach((field) => {
         if (!validateField(field)) {
           isValid = false
