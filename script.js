@@ -1357,7 +1357,7 @@ function validateField(field) {
   } else if (field.validity.typeMismatch && field.type === "email") {
     errorMessage = "Please enter a valid email address (include @ symbol)"
   } else if (field.validity.tooShort) {
-    errorMessage = `${field.placeholder} Number must have exactly ${field.minLength} numbers`
+    errorMessage = `${field.placeholder}  must have  ${field.minLength} characters`
   } else if (field.validity.tooLong) {
     errorMessage = `${field.placeholder} must be less than ${field.maxLength} characters`
   } else if (field.validity.patternMismatch && field.type === "email") {
