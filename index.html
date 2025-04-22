@@ -2123,5 +2123,126 @@
 <script>
   document.getElementById("year").textContent = new Date().getFullYear();
 </script>
+
+<!-- Add this at the end of your HTML file, just before the closing </body> tag -->
+<div id="certificate-modal" class="certificate-modal" role="dialog" aria-modal="true" aria-labelledby="certificate-title">
+  <span class="certificate-close" aria-label="Close" role="button" tabindex="0">&times;</span>
+  <div class="certificate-modal-content">
+
+    <div class="certificate-container">
+      <iframe id="certificate-frame" src="" frameborder="0" allowfullscreen title="Certificate preview"></iframe>
+    </div>
+  </div>
+</div>
+<script>
+  // Certificate preview functionality
+  document.addEventListener("DOMContentLoaded", function() {
+    // Get modal elements
+    const modal = document.getElementById("certificate-modal");
+    const closeBtn = document.querySelector(".certificate-close");
+    const certificateFrame = document.getElementById("certificate-frame");
+    const body = document.body;
+
+    // Get all certificate links
+    const certificateLinks = document.querySelectorAll(".cert-card a");
+
+    // Function to open modal
+    function openModal(url) {
+      // Set the iframe source
+      certificateFrame.src = url;
+      
+      // Show the modal
+      modal.style.display = "flex";
+      
+      // Prevent body scrolling when modal is open
+      body.style.overflow = "hidden";
+      
+      // Set focus to close button for accessibility
+      setTimeout(() => closeBtn.focus(), 100);
+    }
+
+    // Function to close modal
+    function closeModal() {
+      modal.style.display = "none";
+      // Clear the iframe source when closing
+      certificateFrame.src = "";
+      // Restore body scrolling
+      body.style.overflow = "";
+    }
+
+    // Add click event to all certificate links
+    certificateLinks.forEach(link => {
+      link.addEventListener("click", function(e) {
+        e.preventDefault();
+
+        // Get the Google Drive URL
+        const driveUrl = this.getAttribute("href");
+
+        // Extract the file ID from the Google Drive URL
+        const fileId = driveUrl.split("/")[5];
+
+        // Create Google Drive embed URL
+        const embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+        
+        // Open the modal with the embed URL
+        openModal(embedUrl);
+      });
+    });
+
+    // Close modal when clicking the close button
+    closeBtn.addEventListener("click", closeModal);
+    
+    // Support keyboard interaction for close button
+    closeBtn.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        closeModal();
+      }
+    });
+
+    // Close modal when clicking outside the modal content
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.style.display === "flex") {
+        closeModal();
+      }
+    });
+    
+    // Handle orientation change for mobile devices
+    window.addEventListener("orientationchange", () => {
+      if (modal.style.display === "flex") {
+        // Small timeout to allow the orientation change to complete
+        setTimeout(() => {
+          // Adjust modal position if needed
+          modal.scrollTop = 0;
+        }, 200);
+      }
+    });
+    
+    // Adjust iframe container background based on certificate dimensions
+    certificateFrame.addEventListener('load', function() {
+      try {
+        // Add a small delay to ensure the iframe content is fully loaded
+        setTimeout(() => {
+          const container = document.querySelector('.certificate-container');
+          // Set background to white for better certificate visibility
+          container.style.backgroundColor = '#fff';
+          
+          // Center the iframe content
+          certificateFrame.style.display = 'block';
+          certificateFrame.style.margin = '0 auto';
+        }, 300);
+      } catch (error) {
+        console.log('Could not adjust certificate background:', error);
+      }
+    });
+  });
+</script>
   </body>
 </html>
