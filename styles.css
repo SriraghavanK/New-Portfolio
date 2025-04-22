@@ -3090,7 +3090,7 @@ img {
 .footer-links a::before {
   content: "→";
   position: absolute;
-  left: 0;
+  left: -3px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--primary-color);
