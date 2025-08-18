@@ -2171,33 +2171,20 @@ img {
 }
 
 /* Skill card animations */
-.skill-card:nth-child(odd) {
-  animation: floatUp 3s infinite alternate;
-  animation-delay: calc(var(--i) * 0.2s);
+.skill-card {
+  animation: floatWave 1.8s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * 0.15s);
 }
 
-.skill-card:nth-child(even) {
-  animation: floatDown 3s infinite alternate;
-  animation-delay: calc(var(--i) * 0.2s);
-}
-
-@keyframes floatUp {
+@keyframes floatWave {
   0% {
     transform: translateY(0);
   }
   100% {
-    transform: translateY(-10px);
+    transform: translateY(-18px);
   }
 }
 
-@keyframes floatDown {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(10px);
-  }
-}
 
 /* Skill card glow effect */
 .skill-card::after {
